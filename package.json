@@ -1,0 +1,105 @@
+{
+  "name": "@scottlepp/mcp-toolkit",
+  "version": "0.1.0",
+  "description": "Shared toolkit for building token-efficient Model Context Protocol (MCP) servers — operation manifest, response trimming, disk sandbox, code-api/CLI bridge, SKILL.md installer.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "import": "./build/index.js"
+    },
+    "./manifest": {
+      "types": "./build/core/manifest.d.ts",
+      "import": "./build/core/manifest.js"
+    },
+    "./sandbox": {
+      "types": "./build/core/sandbox.d.ts",
+      "import": "./build/core/sandbox.js"
+    },
+    "./page-cache": {
+      "types": "./build/core/page-cache.d.ts",
+      "import": "./build/core/page-cache.js"
+    },
+    "./trim": {
+      "types": "./build/core/trim.d.ts",
+      "import": "./build/core/trim.js"
+    },
+    "./trim-registry": {
+      "types": "./build/core/trim-registry.d.ts",
+      "import": "./build/core/trim-registry.js"
+    },
+    "./bridge": {
+      "types": "./build/bridge/index.d.ts",
+      "import": "./build/bridge/index.js"
+    },
+    "./code-api": {
+      "types": "./build/code-api/index.d.ts",
+      "import": "./build/code-api/index.js"
+    },
+    "./cli": {
+      "types": "./build/cli/index.d.ts",
+      "import": "./build/cli/index.js"
+    },
+    "./client": {
+      "types": "./build/client/index.d.ts",
+      "import": "./build/client/index.js"
+    },
+    "./config": {
+      "types": "./build/config/index.d.ts",
+      "import": "./build/config/index.js"
+    },
+    "./toon": {
+      "types": "./build/core/toon.d.ts",
+      "import": "./build/core/toon.js"
+    }
+  },
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "files": [
+    "build",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepare": "npm run build",
+    "clean": "rm -rf build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "toolkit",
+    "token-efficient",
+    "ai",
+    "claude",
+    "trim",
+    "sandbox",
+    "code-api"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "undici": "^6.25.0"
+  },
+  "peerDependencies": {
+    "zod": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "zod": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5",
+    "zod": "^4.4.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
