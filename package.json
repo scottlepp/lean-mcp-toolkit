@@ -1,6 +1,6 @@
 {
   "name": "@scottlepp/mcp-toolkit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Shared toolkit for building token-efficient Model Context Protocol (MCP) servers — operation manifest, response trimming, disk sandbox, code-api/CLI bridge, SKILL.md installer.",
   "type": "module",
   "exports": {
@@ -51,6 +51,26 @@
     "./toon": {
       "types": "./build/core/toon.d.ts",
       "import": "./build/core/toon.js"
+    },
+    "./tool": {
+      "types": "./build/tool/dispatcher.d.ts",
+      "import": "./build/tool/dispatcher.js"
+    },
+    "./schemas": {
+      "types": "./build/schemas/index.d.ts",
+      "import": "./build/schemas/index.js"
+    },
+    "./http-client": {
+      "types": "./build/client/http.d.ts",
+      "import": "./build/client/http.js"
+    },
+    "./mutation-ack": {
+      "types": "./build/trim/mutation-ack.d.ts",
+      "import": "./build/trim/mutation-ack.js"
+    },
+    "./stdio": {
+      "types": "./build/boot/stdio.d.ts",
+      "import": "./build/boot/stdio.js"
     }
   },
   "main": "./build/index.js",
