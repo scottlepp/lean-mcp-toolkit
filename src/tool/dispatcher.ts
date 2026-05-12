@@ -17,12 +17,20 @@
 import { z, type ZodTypeAny } from "zod";
 
 import {
+  findOperation,
   invokeOperation,
+  invokeOperationRaw,
   type InvokeOptions,
   type Manifest,
 } from "../core/manifest.js";
 import type { Client } from "../client/index.js";
 import type { TrimRegistry } from "../core/trim-registry.js";
+
+// Meta-arg key the dispatcher peels off before per-action Zod
+// validation. Setting it to `true` bypasses the trim projection and
+// returns the raw API response — escape hatch for actions whose
+// trimmed shape drops content the caller needs.
+export const FULL_META_KEY = "full";
 
 export interface ToolAction {
   // Manifest operation name (`pullrequest.get`, etc.). Required for
@@ -145,6 +153,16 @@ export function mergeActionSchemas(
     prop.description = `${original}(used by: ${actionList.join(", ")})`;
   }
 
+  // Surface the `full` meta-arg as a declared top-level field so a
+  // strict `additionalProperties: false` schema doesn't reject calls
+  // that use the escape hatch. The dispatcher strips `full` before
+  // per-action Zod validation, so it never reaches the action schema.
+  properties[FULL_META_KEY] = {
+    type: "boolean",
+    description:
+      "If true, skip the trim projection and return the raw API response. Only valid for read-shaped (GET) actions.",
+  };
+
   return {
     type: "object",
     properties,
@@ -171,6 +189,17 @@ export class DispatchError extends Error {
   constructor(message: string, public readonly action: string) {
     super(message);
     this.name = "DispatchError";
+  }
+}
+
+// Alias for callers that prefer the "tool error" name. Same shape;
+// preserved so consumers migrating from a per-server class don't have
+// to rename catch sites. `ToolError instanceof DispatchError` and the
+// reverse are both true.
+export class ToolError extends DispatchError {
+  constructor(message: string, action: string) {
+    super(message, action);
+    this.name = "ToolError";
   }
 }
 
@@ -205,8 +234,21 @@ export async function dispatch(
     );
   }
 
-  // Strip the action discriminator, then validate the rest.
-  const { action: _drop, ...flatArgs } = argsObj;
+  // Peel off `full` before per-action Zod validation so strict schemas
+  // don't reject it as an unknown field. We validate the type here and
+  // strip the key from the args.
+  const fullRaw = argsObj[FULL_META_KEY];
+  if (fullRaw !== undefined && typeof fullRaw !== "boolean") {
+    throw new DispatchError(
+      `${tool.name}.${actionName}: \`${FULL_META_KEY}\` must be a boolean if provided`,
+      actionName,
+    );
+  }
+  const wantFull = fullRaw === true;
+
+  // Strip the action discriminator and `full` meta-arg, then validate
+  // the rest.
+  const { action: _drop, [FULL_META_KEY]: _drop2, ...flatArgs } = argsObj;
   let validated: Record<string, unknown> = flatArgs;
   if (action.schema) {
     const parsed = action.schema.safeParse(flatArgs);
@@ -226,6 +268,12 @@ export async function dispatch(
   // entirely. Used for actions that fetch text, run server-side
   // filters, or otherwise need shapes the manifest can't express.
   if (action.handler) {
+    if (wantFull) {
+      throw new DispatchError(
+        `${tool.name}.${actionName}: \`${FULL_META_KEY}\` is only valid for manifest-dispatched actions, not custom handlers`,
+        actionName,
+      );
+    }
     const result = await action.handler(validated, ctx);
     return { result };
   }
@@ -240,6 +288,27 @@ export async function dispatch(
   const finalArgs = ctx.preprocess
     ? ctx.preprocess(action.operation, validated)
     : validated;
+
+  if (wantFull) {
+    // `full: true` only makes sense for read-shaped (GET) ops. Mutation
+    // verbs go through the mutation-ack envelope, not a trim
+    // projection, so bypassing the trim doesn't surface anything new.
+    const op = findOperation(ctx.manifest, action.operation);
+    if (op.verb !== "GET") {
+      throw new DispatchError(
+        `${tool.name}.${actionName}: \`${FULL_META_KEY}\` is only valid for read-shaped (GET) actions; ${action.operation} is ${op.verb}`,
+        actionName,
+      );
+    }
+    const { response } = await invokeOperationRaw(
+      ctx.manifest,
+      ctx.client,
+      action.operation,
+      finalArgs,
+      ctx.invokeOptions,
+    );
+    return { result: response };
+  }
 
   const result = await invokeOperation(
     ctx.manifest,

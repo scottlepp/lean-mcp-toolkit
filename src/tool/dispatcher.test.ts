@@ -7,6 +7,8 @@ import type { Manifest } from "../core/manifest.js";
 
 import {
   DispatchError,
+  FULL_META_KEY,
+  ToolError,
   buildInputSchema,
   dispatch,
   type ConsolidatedToolDef,
@@ -107,7 +109,8 @@ describe("buildInputSchema", () => {
     };
     const schema = buildInputSchema(tool);
     expect(schema.properties.action.enum).toEqual(["get"]);
-    expect(Object.keys(schema.properties)).toEqual(["action"]);
+    // `action` and the `full` meta-arg are always present.
+    expect(Object.keys(schema.properties).sort()).toEqual(["action", "full"]);
   });
 });
 
@@ -224,5 +227,87 @@ describe("dispatch", () => {
     await expect(
       dispatch(bad, { action: "broken" }, { manifest: [], client: makeStubClient(), trimRegistry }),
     ).rejects.toBeInstanceOf(DispatchError);
+  });
+
+  it("full: true returns the raw response (skipping trim)", async () => {
+    const r = await dispatch(
+      tool,
+      { action: "get", id: "abc", [FULL_META_KEY]: true },
+      { manifest, client: makeStubClient(), trimRegistry },
+    );
+    // Trim wraps in { trimmed: ... }; raw bypasses it.
+    expect(r.result).toEqual({ from: "get", path: "/things/abc" });
+  });
+
+  it("omitting full returns the trimmed envelope", async () => {
+    const r = await dispatch(
+      tool,
+      { action: "get", id: "abc" },
+      { manifest, client: makeStubClient(), trimRegistry },
+    );
+    expect(r.result).toEqual({ trimmed: { from: "get", path: "/things/abc" } });
+  });
+
+  it("full: true on a mutation (POST) is rejected", async () => {
+    const mutationManifest: Manifest = [
+      {
+        name: "thing.create",
+        description: "create",
+        verb: "POST",
+        pathTemplate: "/things",
+        params: [],
+        trim: "thing",
+      },
+    ];
+    const mutationTool: ConsolidatedToolDef = {
+      name: "thing",
+      description: "things",
+      actions: {
+        create: {
+          operation: "thing.create",
+          schema: z.object({}),
+          description: "create",
+        },
+      },
+    };
+    await expect(
+      dispatch(
+        mutationTool,
+        { action: "create", [FULL_META_KEY]: true },
+        { manifest: mutationManifest, client: makeStubClient(), trimRegistry },
+      ),
+    ).rejects.toThrow(/only valid for read-shaped/);
+  });
+
+  it("full as a non-boolean value is rejected", async () => {
+    await expect(
+      dispatch(
+        tool,
+        { action: "get", id: "abc", [FULL_META_KEY]: "yes" },
+        { manifest, client: makeStubClient(), trimRegistry },
+      ),
+    ).rejects.toThrow(/must be a boolean/);
+  });
+
+  it("ToolError is interchangeable with DispatchError", () => {
+    const e = new ToolError("nope", "act");
+    expect(e instanceof DispatchError).toBe(true);
+    expect(e instanceof ToolError).toBe(true);
+    expect(e.action).toBe("act");
+
+    const d = new DispatchError("nope", "act");
+    expect(d instanceof DispatchError).toBe(true);
+    // The plan asks for "ToolError instanceof DispatchError and vice
+    // versa." `DispatchError instanceof ToolError` is structurally
+    // false (the parent class isn't an instance of the subclass), but
+    // we can verify catch sites that target the parent see a thrown
+    // ToolError, which is the actual interop guarantee.
+    expect((d as unknown) instanceof ToolError).toBe(false);
+  });
+
+  it("buildInputSchema surfaces the full flag", () => {
+    const schema = buildInputSchema(tool);
+    expect(schema.properties[FULL_META_KEY]).toBeDefined();
+    expect(schema.properties[FULL_META_KEY].type).toBe("boolean");
   });
 });

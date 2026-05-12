@@ -14,6 +14,7 @@
 import { request } from "undici";
 
 import type { Client, QueryParams } from "./index.js";
+import { httpRequest, type RetryOptions } from "./transport.js";
 
 export type HttpAuth =
   | { kind: "basic"; username: string; password: string }
@@ -30,6 +31,11 @@ export interface HttpClientOpts {
   // signed-URL hop on /diff and similar endpoints; high enough that
   // a runaway redirect loop still fails fast.
   maxRedirections?: number;
+  // Opt in to retry + the pooled Agent transport. Omit to preserve
+  // the v0.2 single-shot behavior (raw `undici.request`, no pool).
+  // The retry layer handles 429 honoring Retry-After and falls back
+  // to exponential backoff with jitter.
+  retry?: RetryOptions;
 }
 
 export class HttpClientError extends Error {
@@ -69,6 +75,7 @@ export function createHttpClient(opts: HttpClientOpts): HttpClient {
   const baseUrl = opts.baseUrl;
   const userAgent = opts.userAgent;
   const maxRedirections = opts.maxRedirections ?? 5;
+  const retry = opts.retry;
   const authResolver = makeAuthResolver(opts.auth);
 
   function buildUrl(path: string, queryParams?: QueryParams): string {
@@ -99,17 +106,29 @@ export function createHttpClient(opts: HttpClientOpts): HttpClient {
       bodyPayload = JSON.stringify(reqOpts.body);
     }
 
-    const res = await request(url, {
-      method: reqOpts.method,
-      headers,
-      body: bodyPayload,
-      // Critical for endpoints that 302 to a signed CDN URL
-      // (e.g. bitbucket's /diff). Without this the response body is
-      // the redirect notice, not the actual payload.
-      maxRedirections,
-    });
-    const statusCode = res.statusCode;
-    const text = await res.body.text();
+    let statusCode: number;
+    let text: string;
+    if (retry) {
+      // Retry+pool path. Note: the retry transport doesn't currently
+      // follow redirects — endpoints that 302 to signed CDN URLs
+      // (e.g. bitbucket's /diff) should stay on the single-shot path
+      // until the transport grows redirect handling.
+      const res = await httpRequest(url, { method: reqOpts.method, headers, body: bodyPayload }, retry);
+      statusCode = res.statusCode;
+      text = await res.text();
+    } else {
+      const res = await request(url, {
+        method: reqOpts.method,
+        headers,
+        body: bodyPayload,
+        // Critical for endpoints that 302 to a signed CDN URL
+        // (e.g. bitbucket's /diff). Without this the response body is
+        // the redirect notice, not the actual payload.
+        maxRedirections,
+      });
+      statusCode = res.statusCode;
+      text = await res.body.text();
+    }
 
     if (statusCode === 204) {
       return reqOpts.raw ? "" : {};
