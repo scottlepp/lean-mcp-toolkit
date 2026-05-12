@@ -186,7 +186,11 @@ export interface DispatchResult {
 }
 
 export class DispatchError extends Error {
-  constructor(message: string, public readonly action: string) {
+  constructor(
+    message: string,
+    public readonly action: string,
+    public readonly tool?: string,
+  ) {
     super(message);
     this.name = "DispatchError";
   }
@@ -197,8 +201,8 @@ export class DispatchError extends Error {
 // to rename catch sites. `ToolError instanceof DispatchError` and the
 // reverse are both true.
 export class ToolError extends DispatchError {
-  constructor(message: string, action: string) {
-    super(message, action);
+  constructor(message: string, action: string, tool?: string) {
+    super(message, action, tool);
     this.name = "ToolError";
   }
 }
@@ -216,6 +220,7 @@ export async function dispatch(
     throw new DispatchError(
       `${tool.name}: expected an object input with an "action" field; got ${typeof rawArgs}`,
       "",
+      tool.name,
     );
   }
   const argsObj = rawArgs as Record<string, unknown>;
@@ -224,6 +229,7 @@ export async function dispatch(
     throw new DispatchError(
       `${tool.name}: missing required "action" field (one of: ${Object.keys(tool.actions).join(", ")})`,
       "",
+      tool.name,
     );
   }
   const action = tool.actions[actionName];
@@ -231,6 +237,7 @@ export async function dispatch(
     throw new DispatchError(
       `${tool.name}: unknown action "${actionName}". Valid: ${Object.keys(tool.actions).join(", ")}`,
       actionName,
+      tool.name,
     );
   }
 
@@ -242,6 +249,7 @@ export async function dispatch(
     throw new DispatchError(
       `${tool.name}.${actionName}: \`${FULL_META_KEY}\` must be a boolean if provided`,
       actionName,
+      tool.name,
     );
   }
   const wantFull = fullRaw === true;
@@ -259,6 +267,7 @@ export async function dispatch(
       throw new DispatchError(
         `${tool.name}.${actionName}: invalid args:\n${detail}`,
         actionName,
+        tool.name,
       );
     }
     validated = parsed.data as Record<string, unknown>;
@@ -272,6 +281,7 @@ export async function dispatch(
       throw new DispatchError(
         `${tool.name}.${actionName}: \`${FULL_META_KEY}\` is only valid for manifest-dispatched actions, not custom handlers`,
         actionName,
+        tool.name,
       );
     }
     const result = await action.handler(validated, ctx);
@@ -283,6 +293,7 @@ export async function dispatch(
     throw new DispatchError(
       `${tool.name}.${actionName}: action has neither \`operation\` nor \`handler\` — one is required`,
       actionName,
+      tool.name,
     );
   }
   const finalArgs = ctx.preprocess
@@ -298,6 +309,7 @@ export async function dispatch(
       throw new DispatchError(
         `${tool.name}.${actionName}: \`${FULL_META_KEY}\` is only valid for read-shaped (GET) actions; ${action.operation} is ${op.verb}`,
         actionName,
+        tool.name,
       );
     }
     const { response } = await invokeOperationRaw(

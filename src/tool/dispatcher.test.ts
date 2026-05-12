@@ -305,6 +305,37 @@ describe("dispatch", () => {
     expect((d as unknown) instanceof ToolError).toBe(false);
   });
 
+  it("attaches tool name when dispatch throws on missing action", async () => {
+    let caught: unknown;
+    try {
+      await dispatch(tool, { id: "abc" }, { manifest, client: makeStubClient(), trimRegistry });
+    } catch (err) {
+      caught = err;
+    }
+    expect(caught).toBeInstanceOf(DispatchError);
+    expect((caught as DispatchError).tool).toBe(tool.name);
+  });
+
+  it("attaches tool name on Zod validation failure", async () => {
+    let caught: unknown;
+    try {
+      await dispatch(tool, { action: "get", id: 42 }, { manifest, client: makeStubClient(), trimRegistry });
+    } catch (err) {
+      caught = err;
+    }
+    expect(caught).toBeInstanceOf(DispatchError);
+    expect((caught as DispatchError).tool).toBe(tool.name);
+    expect((caught as DispatchError).action).toBe("get");
+  });
+
+  it("ToolError thrown as DispatchError retains the tool field", () => {
+    const e: DispatchError = new ToolError("nope", "act", "test_tool");
+    expect(e instanceof DispatchError).toBe(true);
+    expect(e instanceof ToolError).toBe(true);
+    expect(e.tool).toBe("test_tool");
+    expect(e.action).toBe("act");
+  });
+
   it("buildInputSchema surfaces the full flag", () => {
     const schema = buildInputSchema(tool);
     expect(schema.properties[FULL_META_KEY]).toBeDefined();
