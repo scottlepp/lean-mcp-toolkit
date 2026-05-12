@@ -3,7 +3,7 @@
 // Each server's CLI is a thin file:
 //
 //   #!/usr/bin/env node
-//   import { createCli } from "@scottlepp/mcp-toolkit/cli";
+//   import { createCli } from "@scottlepper/mcp-toolkit/cli";
 //   import { operations } from "../core/operations.js";
 //   import { callDirect } from "./direct.js";
 //   import { SKILL_CONTENT } from "./skill.js";

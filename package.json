@@ -1,5 +1,5 @@
 {
-  "name": "@scottlepp/mcp-toolkit",
+  "name": "@scottlepper/mcp-toolkit",
   "version": "0.3.0",
   "description": "Shared toolkit for building token-efficient Model Context Protocol (MCP) servers — operation manifest, response trimming, disk sandbox, code-api/CLI bridge, SKILL.md installer.",
   "type": "module",
