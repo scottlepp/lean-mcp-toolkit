@@ -17,6 +17,12 @@ Extracted from [`jira-mcp`](https://github.com/scottlepp/jira-mcp) and [`conflue
 | `@scottlepp/mcp-toolkit/code-api` | `bootCodeApi` (server startup glue) + `createCodeApiTool` (the single MCP tool exposed in code-api mode). |
 | `@scottlepp/mcp-toolkit/cli` | CLI scaffolding (`createCli`): argv parser, help renderer, install-skill subcommand, bridge dispatch, direct-mode hook. |
 | `@scottlepp/mcp-toolkit/client` | Generic `Client` interface (get/post/put/delete). Servers provide their own concrete implementations. |
+| `@scottlepp/mcp-toolkit/http-client` | `createHttpClient` — opinionated `Client` over `undici.request`. Handles redirects, basic/bearer/custom auth, 204 → `{}`. Opt-in `retry` switches to the pooled transport. |
+| `@scottlepp/mcp-toolkit/transport` | Pooled retry-aware HTTP transport. `httpRequest`, `RetryOptions`, `DEFAULT_RETRY`, `computeBackoffMs`, `closeHttpPool`, `__setTransportForTests`. Module-level `undici.Agent` singleton (8 connections, keep-alive). 429-aware retry honoring `Retry-After`. |
+| `@scottlepp/mcp-toolkit/streaming` | `downloadToFile` (atomic stream-to-disk with sha256), `sanitizeFilename` (path-traversal safe), `guardSingleConsumption` (one-shot body wrapper). |
+| `@scottlepp/mcp-toolkit/lru` | `TtlLruCache<K, V>` — in-memory TTL + LRU cache for short-lived metadata (field defs, status enums). |
+| `@scottlepp/mcp-toolkit/disk-cache` | Generic `readDiskCache` / `writeDiskCache` keyed under `<rootDir>/<scope>/<sha256(key)>.json`. Corrupt files return `undefined` rather than throw. |
+| `@scottlepp/mcp-toolkit/tool` | Consolidated-tool dispatcher (`dispatch`, `buildInputSchema`). Includes the `full: true` escape hatch (skip trim, return raw response) on read-shaped actions. `ToolError` alias of `DispatchError`. |
 | `@scottlepp/mcp-toolkit/config` | `parseToolFilterEnv` (`enabled_categories` + `disabled_actions` from env), `parseToolMode`. Server-specific env var names stay in the server; the SDK provides the parsing logic. |
 
 ## Design principles
@@ -73,11 +79,95 @@ const cli = createCli({
 process.exit(await cli.run(process.argv.slice(2)));
 ```
 
+## v0.3 modules
+
+### `lru` — TTL + LRU in-memory cache
+
+```ts
+import { TtlLruCache } from "@scottlepp/mcp-toolkit/lru";
+
+const fieldDefs = new TtlLruCache<string, FieldDef>({
+  maxSize: 500,
+  ttlMs: 10 * 60 * 1000, // 10 min
+});
+fieldDefs.set("summary", def);
+fieldDefs.get("summary"); // touch-on-read promotes recency
+```
+
+### `transport` — pooled retry-aware HTTP
+
+```ts
+import { httpRequest, DEFAULT_RETRY, closeHttpPool } from "@scottlepp/mcp-toolkit/transport";
+
+const res = await httpRequest(
+  "https://api.example.com/v1/things",
+  { method: "GET", headers: { Authorization: "Bearer …" } },
+  DEFAULT_RETRY, // 3 retries, 500ms base, 10s cap; honors Retry-After
+);
+if (res.statusCode === 200) console.log(await res.text());
+
+// On graceful shutdown:
+await closeHttpPool();
+```
+
+Or wire it into the high-level `Client` via the opt-in `retry` option:
+
+```ts
+import { createHttpClient } from "@scottlepp/mcp-toolkit/http-client";
+import { DEFAULT_RETRY } from "@scottlepp/mcp-toolkit/transport";
+
+const client = createHttpClient({
+  baseUrl: "https://api.example.com",
+  auth: { kind: "bearer", token: process.env.TOKEN! },
+  userAgent: "my-mcp/0.1",
+  retry: DEFAULT_RETRY, // omit for v0.2-compatible single-shot behavior
+});
+```
+
+### `streaming` — stream binary downloads to disk
+
+```ts
+import { downloadToFile } from "@scottlepp/mcp-toolkit/streaming";
+
+const ref = await downloadToFile({
+  url: attachment.contentUrl,
+  headers: { Authorization: basicAuth },
+  targetDir: sandbox.sessionCacheDir(), // resolved at runtime
+  filename: attachment.filename, // sanitized before writing
+});
+// ref: { absolutePath, size, sha256 }
+```
+
+### `disk-cache` — generic JSON K/V cache
+
+```ts
+import { readDiskCache, writeDiskCache } from "@scottlepp/mcp-toolkit/disk-cache";
+
+const opts = { rootDir: sandbox.rootCacheDir(), scope: "tenant", ttlMs: 24*60*60*1000 };
+const cached = await readDiskCache<{ cloudId: string }>(opts, host);
+if (!cached) {
+  const fetched = await fetchTenantInfo(host);
+  await writeDiskCache(opts, host, fetched);
+}
+```
+
+### `tool/dispatcher` — `full: true` escape hatch
+
+The dispatcher peels off `full: true` before per-action Zod validation and (for read-shaped GET ops) routes through `invokeOperationRaw` so the agent receives the untrimmed response — useful when the default summary drops content the caller wants. Mutation verbs reject `full: true` explicitly. The `ToolError` class is an alias of `DispatchError` for consumers that prefer the "tool error" name.
+
+```ts
+import { dispatch, FULL_META_KEY, ToolError } from "@scottlepp/mcp-toolkit/tool";
+
+await dispatch(
+  myTool,
+  { action: "list", [FULL_META_KEY]: true, project: "ABC" },
+  { manifest, client, trimRegistry },
+);
+```
+
 ## Status
 
-`v0.1` — Phase 0 complete. SDK exports core/sandbox, core/page-cache, core/manifest, core/trim helpers, bridge, code-api, cli, config. TOON serialization deferred to v0.2.
-
-Currently retrofitting `jira-mcp` and `confluence-mcp` onto the SDK as proof; expect API tweaks during that pass.
+`v0.3` — Gap-close release prior to the `jira-mcp` consumption swap. Adds `lru`, `disk-cache`, `transport` (retry + pool), `streaming` (atomic download), and the `full: true` escape hatch / `ToolError` alias on the dispatcher. All v0.2 APIs are preserved without breaking change.
 
 ## License
 
