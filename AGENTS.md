@@ -105,7 +105,7 @@ Unless the user explicitly asks. This applies to skill content too.
 
 ## Where things are documented
 
-- **README.md** — user-facing: what's in the box, MVP consumer example, v0.3 module deep-dives.
+- **README.md** — user-facing: what's in the box, MVP consumer example, per-version module deep-dives, status notes.
 - **AGENTS.md** (this file) — contributor-facing, agent-agnostic.
 - **CLAUDE.md** — pointer to AGENTS.md.
 - **.claude/skills/mcp-toolkit/** — building-MCP-servers guide for agents.
