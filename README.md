@@ -2,8 +2,6 @@
 
 Shared toolkit for building token-efficient [Model Context Protocol](https://modelcontextprotocol.io) servers.
 
-Extracted from [`jira-mcp`](https://github.com/scottlepp/jira-mcp) and [`confluence-mcp`](https://github.com/scottlepp/confluence-mcp) (production token-optimized MCP servers achieving up to 114× per-call response reduction). Used by `jira-mcp`, `confluence-mcp`, and `bitbucket-mcp`.
-
 ## What's in the box
 
 | Subpath                                  | Purpose                                                                                                                                                                                                                                                      |
