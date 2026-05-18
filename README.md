@@ -1,4 +1,4 @@
-# lean-mcp-toolkit
+# ultra-mcp-toolkit
 
 Shared toolkit for building token-efficient [Model Context Protocol](https://modelcontextprotocol.io) servers.
 
