@@ -4,11 +4,11 @@ Guidance for coding agents (Claude Code, Codex CLI, Cursor, Aider, Continue, Zed
 
 ## What this repo is
 
-`@scottlepper/mcp-toolkit` — shared infrastructure for building token-efficient [MCP](https://modelcontextprotocol.io) servers. Extracted from production servers (`jira-mcp`, `confluence-mcp`, `bitbucket-mcp`).
+`ultra-mcp-toolkit` — shared infrastructure for building token-efficient [MCP](https://modelcontextprotocol.io) servers. Extracted from production servers (`jira-mcp`, `confluence-mcp`, `bitbucket-mcp`).
 
 Two distinct concerns when working here:
 1. **Contributing to the toolkit** (this file) — build, test, conventions.
-2. **Using the toolkit to build an MCP server** — see [.claude/skills/mcp-toolkit/SKILL.md](.claude/skills/mcp-toolkit/SKILL.md) and its `references/`. Plain markdown; non-Claude agents can be pointed at these files directly.
+2. **Using the toolkit to build an MCP server** — see [.claude/skills/ultra-mcp-toolkit/SKILL.md](.claude/skills/ultra-mcp-toolkit/SKILL.md) and its `references/`. Plain markdown; non-Claude agents can be pointed at these files directly.
 
 ## Project layout
 
@@ -82,17 +82,17 @@ Unless the user explicitly asks. This applies to skill content too.
 ## Agent-specific notes
 
 ### Claude Code
-- This repo ships a Claude Code skill at [.claude/skills/mcp-toolkit/](.claude/skills/mcp-toolkit/) — hub `SKILL.md` plus topic references. Install with `npm run install-skill` (user-global) or `npm run install-skill -- --project` (cwd).
+- This repo ships a Claude Code skill at [.claude/skills/ultra-mcp-toolkit/](.claude/skills/ultra-mcp-toolkit/) — hub `SKILL.md` plus topic references. Install with `npm run install-skill` (user-global) or `npm run install-skill -- --project` (cwd).
 - `CLAUDE.md` at repo root just points back here — single source of truth.
 
 ### Codex CLI, Cursor, Aider, Continue, Zed, Warp, etc.
 - Read this file first.
 - For toolkit-usage guidance (building an MCP server *with* the toolkit), point yourself at the skill markdown:
-  - [.claude/skills/mcp-toolkit/SKILL.md](.claude/skills/mcp-toolkit/SKILL.md) (entry / mental model)
-  - [.claude/skills/mcp-toolkit/references/manifest.md](.claude/skills/mcp-toolkit/references/manifest.md)
-  - [.claude/skills/mcp-toolkit/references/trim.md](.claude/skills/mcp-toolkit/references/trim.md)
-  - [.claude/skills/mcp-toolkit/references/dispatcher.md](.claude/skills/mcp-toolkit/references/dispatcher.md)
-  - [.claude/skills/mcp-toolkit/references/server-boot.md](.claude/skills/mcp-toolkit/references/server-boot.md)
+  - [.claude/skills/ultra-mcp-toolkit/SKILL.md](.claude/skills/ultra-mcp-toolkit/SKILL.md) (entry / mental model)
+  - [.claude/skills/ultra-mcp-toolkit/references/manifest.md](.claude/skills/ultra-mcp-toolkit/references/manifest.md)
+  - [.claude/skills/ultra-mcp-toolkit/references/trim.md](.claude/skills/ultra-mcp-toolkit/references/trim.md)
+  - [.claude/skills/ultra-mcp-toolkit/references/dispatcher.md](.claude/skills/ultra-mcp-toolkit/references/dispatcher.md)
+  - [.claude/skills/ultra-mcp-toolkit/references/server-boot.md](.claude/skills/ultra-mcp-toolkit/references/server-boot.md)
 - These files are plain markdown — no Claude-specific format dependencies in the body. Frontmatter (`---name: ... ---`) is Claude-only metadata and can be ignored.
 
 ## Don'ts
@@ -108,5 +108,5 @@ Unless the user explicitly asks. This applies to skill content too.
 - **README.md** — user-facing: what's in the box, MVP consumer example, per-version module deep-dives, status notes.
 - **AGENTS.md** (this file) — contributor-facing, agent-agnostic.
 - **CLAUDE.md** — pointer to AGENTS.md.
-- **.claude/skills/mcp-toolkit/** — building-MCP-servers guide for agents.
+- **.claude/skills/ultra-mcp-toolkit/** — building-MCP-servers guide for agents.
 - **V<n>_PLAN.md** — in-flight version plan (transient).

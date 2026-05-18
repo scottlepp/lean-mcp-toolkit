@@ -13,7 +13,7 @@ That's it. Pure function, no side effects, no async. Receives the raw response f
 ## Allowlist, never denylist
 
 ```ts
-import { pick } from "@scottlepper/mcp-toolkit/trim";
+import { pick } from "ultra-mcp-toolkit/trim";
 
 const issueSummary = (raw: unknown) => {
   const r = raw as { key: string; fields: Record<string, unknown> };
@@ -32,7 +32,7 @@ Why allowlist:
 ## Registering trims
 
 ```ts
-import { createTrimRegistry } from "@scottlepper/mcp-toolkit/trim-registry";
+import { createTrimRegistry } from "ultra-mcp-toolkit/trim-registry";
 
 export const trimRegistry = createTrimRegistry({
   issue: issueSummary,
@@ -44,7 +44,7 @@ export const trimRegistry = createTrimRegistry({
 
 The registry is type-safe (string keys → known set), and the dispatcher throws if a manifest entry references a key that isn't registered.
 
-## Helpers in `@scottlepper/mcp-toolkit/trim`
+## Helpers in `ultra-mcp-toolkit/trim`
 
 - **`pick(obj, keys)`** — shallow copy of allowed keys. The workhorse.
 - **`paginatedListSummary(raw, { total, startAt, maxResults })`** — for `{ total, startAt, maxResults, values }`-shaped responses (Jira, Confluence, Bitbucket). Drops `values` from the model's view but the ref still has them.
@@ -62,8 +62,8 @@ The registry is type-safe (string keys → known set), and the dispatcher throws
 
 The model sees `summary` inline. If it needs full detail (PR diff, page body, full issue), it reads the ref. Two cache primitives:
 
-- **`@scottlepper/mcp-toolkit/sandbox`** — content-addressed (SHA256). Anonymous large payloads. Session-isolated; TTL cleanup.
-- **`@scottlepper/mcp-toolkit/page-cache`** — versioned-id (`kind + id + version`). Known keys where the version invalidates the cache (PR diff by head SHA, Confluence page by version number).
+- **`ultra-mcp-toolkit/sandbox`** — content-addressed (SHA256). Anonymous large payloads. Session-isolated; TTL cleanup.
+- **`ultra-mcp-toolkit/page-cache`** — versioned-id (`kind + id + version`). Known keys where the version invalidates the cache (PR diff by head SHA, Confluence page by version number).
 
 Use sandbox by default. Use page-cache only when you have a stable `(kind, id, version)` tuple and want re-fetch elision.
 
@@ -72,7 +72,7 @@ Use sandbox by default. Use page-cache only when you have a stable `(kind, id, v
 ### List endpoint → drop inline items, keep counts
 
 ```ts
-import { paginatedListSummary } from "@scottlepper/mcp-toolkit/trim";
+import { paginatedListSummary } from "ultra-mcp-toolkit/trim";
 
 const issueListSummary = (raw: unknown) =>
   paginatedListSummary(raw as any, { itemPreview: false });
@@ -99,7 +99,7 @@ const issueSummary = (raw: unknown) => {
 For POST/PUT/DELETE, use the mutation-ack helper:
 
 ```ts
-import { createMutationAck } from "@scottlepper/mcp-toolkit/mutation-ack";
+import { createMutationAck } from "ultra-mcp-toolkit/mutation-ack";
 
 const created = createMutationAck({ kind: "issue", id: r.key, url: r.self });
 // → { ok: true, kind: "issue", id: "PROJ-123", url: "..." }

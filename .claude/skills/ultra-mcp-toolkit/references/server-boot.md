@@ -16,10 +16,10 @@ The same manifest, trims, and operations power both. Only the *surface* differs.
 `Client` is an interface:
 
 ```ts
-import type { Client } from "@scottlepper/mcp-toolkit/client";
+import type { Client } from "ultra-mcp-toolkit/client";
 
 // Most servers use the bundled HTTP client:
-import { createHttpClient } from "@scottlepper/mcp-toolkit/http-client";
+import { createHttpClient } from "ultra-mcp-toolkit/http-client";
 
 const client: Client = createHttpClient({
   baseUrl: "https://your.atlassian.net",
@@ -35,8 +35,8 @@ const client: Client = createHttpClient({
 ## Building the sandbox + registry
 
 ```ts
-import { createSandbox } from "@scottlepper/mcp-toolkit/sandbox";
-import { createTrimRegistry } from "@scottlepper/mcp-toolkit/trim-registry";
+import { createSandbox } from "ultra-mcp-toolkit/sandbox";
+import { createTrimRegistry } from "ultra-mcp-toolkit/trim-registry";
 
 const sandbox = createSandbox({ rootName: "my-server-mcp" });
 const trimRegistry = createTrimRegistry({
@@ -51,8 +51,8 @@ const trimRegistry = createTrimRegistry({
 
 ```ts
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { startStdioServer } from "@scottlepper/mcp-toolkit/stdio";
-import { buildInputSchema, dispatch } from "@scottlepper/mcp-toolkit/tool";
+import { startStdioServer } from "ultra-mcp-toolkit/stdio";
+import { buildInputSchema, dispatch } from "ultra-mcp-toolkit/tool";
 
 const server = new Server({ name: "my-server-mcp", version: "1.0.0" },
   { capabilities: { tools: {} } });
@@ -85,7 +85,7 @@ await startStdioServer({
 ## Code-api mode
 
 ```ts
-import { bootCodeApi, createCodeApiTool } from "@scottlepper/mcp-toolkit/code-api";
+import { bootCodeApi, createCodeApiTool } from "ultra-mcp-toolkit/code-api";
 
 const { bridge, ctx } = await bootCodeApi({
   manifest, client, sandbox, trimRegistry,
@@ -113,7 +113,7 @@ How it works:
 ```ts
 // dist/cli/index.js
 #!/usr/bin/env node
-import { createCli } from "@scottlepper/mcp-toolkit/cli";
+import { createCli } from "ultra-mcp-toolkit/cli";
 import { manifest } from "../core/manifest.js";
 import { callDirect } from "./direct.js";        // optional direct-mode hook
 import { SKILL_CONTENT } from "./skill.js";       // optional install-skill body

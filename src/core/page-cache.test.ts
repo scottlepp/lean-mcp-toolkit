@@ -9,7 +9,7 @@ describe("createPageCache", () => {
   let rootDir: string;
 
   beforeEach(async () => {
-    rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "mcp-toolkit-pc-"));
+    rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "ultra-mcp-toolkit-pc-"));
   });
 
   afterEach(async () => {

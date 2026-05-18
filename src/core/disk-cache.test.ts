@@ -9,7 +9,7 @@ describe("disk-cache", () => {
   let rootDir: string;
 
   beforeEach(async () => {
-    rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "mcp-toolkit-disk-cache-"));
+    rootDir = await fs.mkdtemp(path.join(os.tmpdir(), "ultra-mcp-toolkit-disk-cache-"));
   });
 
   afterEach(async () => {

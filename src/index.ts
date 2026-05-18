@@ -1,21 +1,21 @@
-// @scottlepper/mcp-toolkit — umbrella export.
+// ultra-mcp-toolkit — umbrella export.
 //
 // Importing from the package root pulls in every public surface. For
 // tree-shaking, prefer the namespaced subpath imports declared in
 // package.json `exports`:
 //
-//   import { createSandbox } from "@scottlepper/mcp-toolkit/sandbox";
-//   import { createPageCache } from "@scottlepper/mcp-toolkit/page-cache";
-//   import { invokeOperation } from "@scottlepper/mcp-toolkit/manifest";
-//   import { pick, paginatedListSummary } from "@scottlepper/mcp-toolkit/trim";
-//   import { startBridge, callBridge } from "@scottlepper/mcp-toolkit/bridge";
-//   import { bootCodeApi, createCodeApiTool } from "@scottlepper/mcp-toolkit/code-api";
-//   import { createCli } from "@scottlepper/mcp-toolkit/cli";
-//   import { dispatch, buildInputSchema } from "@scottlepper/mcp-toolkit/tool";
-//   import { positiveInt } from "@scottlepper/mcp-toolkit/schemas";
-//   import { createHttpClient } from "@scottlepper/mcp-toolkit/http-client";
-//   import { createMutationAck } from "@scottlepper/mcp-toolkit/mutation-ack";
-//   import { startStdioServer } from "@scottlepper/mcp-toolkit/stdio";
+//   import { createSandbox } from "ultra-mcp-toolkit/sandbox";
+//   import { createPageCache } from "ultra-mcp-toolkit/page-cache";
+//   import { invokeOperation } from "ultra-mcp-toolkit/manifest";
+//   import { pick, paginatedListSummary } from "ultra-mcp-toolkit/trim";
+//   import { startBridge, callBridge } from "ultra-mcp-toolkit/bridge";
+//   import { bootCodeApi, createCodeApiTool } from "ultra-mcp-toolkit/code-api";
+//   import { createCli } from "ultra-mcp-toolkit/cli";
+//   import { dispatch, buildInputSchema } from "ultra-mcp-toolkit/tool";
+//   import { positiveInt } from "ultra-mcp-toolkit/schemas";
+//   import { createHttpClient } from "ultra-mcp-toolkit/http-client";
+//   import { createMutationAck } from "ultra-mcp-toolkit/mutation-ack";
+//   import { startStdioServer } from "ultra-mcp-toolkit/stdio";
 
 export * from "./core/sandbox.js";
 export * from "./core/page-cache.js";

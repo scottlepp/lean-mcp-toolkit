@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Install the bundled mcp-toolkit Claude Code skill to either
-// ~/.claude/skills/mcp-toolkit/ (user-global, default) or
-// ./.claude/skills/mcp-toolkit/ (project-local, with --project).
+// ~/.claude/skills/ultra-mcp-toolkit/ (user-global, default) or
+// ./.claude/skills/ultra-mcp-toolkit/ (project-local, with --project).
 //
 // Usage:
 //   node scripts/install-skill.mjs [--project] [--force] [--dry-run] [--print]
@@ -13,7 +13,7 @@ import { homedir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const SLUG = "mcp-toolkit";
+const SLUG = "ultra-mcp-toolkit";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SOURCE = resolve(__dirname, "..", ".claude", "skills", SLUG);
 
@@ -36,10 +36,10 @@ if (unknown.length > 0) {
 if (help) {
   process.stdout.write(
     [
-      "install-skill — install the @scottlepper/mcp-toolkit Claude Code skill",
+      "install-skill — install the ultra-mcp-toolkit Claude Code skill",
       "",
-      "  Default target: ~/.claude/skills/mcp-toolkit/",
-      "  --project      install to ./.claude/skills/mcp-toolkit/ in the cwd",
+      "  Default target: ~/.claude/skills/ultra-mcp-toolkit/",
+      "  --project      install to ./.claude/skills/ultra-mcp-toolkit/ in the cwd",
       "  --force        overwrite an existing skill directory",
       "  --dry-run      report what would be installed without writing",
       "  --print        dump all skill files to stdout instead of installing",

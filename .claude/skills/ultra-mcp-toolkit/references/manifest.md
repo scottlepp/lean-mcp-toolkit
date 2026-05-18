@@ -5,7 +5,7 @@ The manifest is the single source of truth for every API operation a server expo
 ## Operation shape
 
 ```ts
-import type { Manifest, Operation } from "@scottlepper/mcp-toolkit/manifest";
+import type { Manifest, Operation } from "ultra-mcp-toolkit/manifest";
 
 const issueGet: Operation = {
   name: "issue.get",                  // stable id, used by CLI + dispatcher
@@ -45,7 +45,7 @@ Opaque to the SDK. Servers attach routing hints here — e.g. jira-mcp uses `met
 ## Dispatching against the manifest
 
 ```ts
-import { invokeOperation } from "@scottlepper/mcp-toolkit/manifest";
+import { invokeOperation } from "ultra-mcp-toolkit/manifest";
 
 const result = await invokeOperation(
   manifest,

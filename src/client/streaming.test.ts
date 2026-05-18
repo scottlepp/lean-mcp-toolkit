@@ -78,7 +78,7 @@ describe("downloadToFile", () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "mcp-toolkit-stream-"));
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "ultra-mcp-toolkit-stream-"));
   });
 
   afterEach(async () => {

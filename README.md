@@ -6,22 +6,22 @@ Shared toolkit for building token-efficient [Model Context Protocol](https://mod
 
 | Subpath                                  | Purpose                                                                                                                                                                                                                                                      |
 | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `@scottlepper/mcp-toolkit/manifest`      | Central operation manifest type (`Operation`, `ParamSpec`) + dispatcher (`invokeOperation`, `invokeOperationRaw`). Generic over a `Client` adapter with an `ExecuteFn` hook for multi-API routing.                                                           |
-| `@scottlepper/mcp-toolkit/sandbox`       | Content-addressed disk cache (SHA256 hash → JSON file). Stores full responses out of model context; returns summary + ref. Session-isolated, TTL cleanup.                                                                                                    |
-| `@scottlepper/mcp-toolkit/page-cache`    | Versioned-id disk cache (kind + id + version → JSON file). For known-key resources where the version invalidates the cache (PR diffs by head SHA, Confluence pages by version). Atomic writes via tmpfile+rename.                                            |
-| `@scottlepper/mcp-toolkit/trim`          | Helpers for response shaping: `pick`, `paginatedListSummary`, `bareListSummary`, `extractNextCursor`, `safeHref`.                                                                                                                                            |
-| `@scottlepper/mcp-toolkit/trim-registry` | Type-safe string-keyed registry of trim projection functions (`createTrimRegistry`).                                                                                                                                                                         |
-| `@scottlepper/mcp-toolkit/bridge`        | IPC socket bridge for the code-api pattern. `startBridge` (server), `callBridge` (client). Unix domain socket on POSIX, loopback TCP on Windows.                                                                                                             |
-| `@scottlepper/mcp-toolkit/code-api`      | `bootCodeApi` (server startup glue) + `createCodeApiTool` (the single MCP tool exposed in code-api mode).                                                                                                                                                    |
-| `@scottlepper/mcp-toolkit/cli`           | CLI scaffolding (`createCli`): argv parser, help renderer, install-skill subcommand, bridge dispatch, direct-mode hook.                                                                                                                                      |
-| `@scottlepper/mcp-toolkit/client`        | Generic `Client` interface (get/post/put/delete). Servers provide their own concrete implementations.                                                                                                                                                        |
-| `@scottlepper/mcp-toolkit/http-client`   | `createHttpClient` — opinionated `Client` over `undici.request`. Handles redirects, basic/bearer/custom auth, 204 → `{}`. Opt-in `retry` switches to the pooled transport.                                                                                   |
-| `@scottlepper/mcp-toolkit/transport`     | Pooled retry-aware HTTP transport. `httpRequest`, `RetryOptions`, `DEFAULT_RETRY`, `computeBackoffMs`, `closeHttpPool`, `__setTransportForTests`. Module-level `undici.Agent` singleton (8 connections, keep-alive). 429-aware retry honoring `Retry-After`. |
-| `@scottlepper/mcp-toolkit/streaming`     | `downloadToFile` (atomic stream-to-disk with sha256), `sanitizeFilename` (path-traversal safe), `guardSingleConsumption` (one-shot body wrapper).                                                                                                            |
-| `@scottlepper/mcp-toolkit/lru`           | `TtlLruCache<K, V>` — in-memory TTL + LRU cache for short-lived metadata (field defs, status enums).                                                                                                                                                         |
-| `@scottlepper/mcp-toolkit/disk-cache`    | Generic `readDiskCache` / `writeDiskCache` keyed under `<rootDir>/<scope>/<sha256(key)>.json`. Corrupt files return `undefined` rather than throw.                                                                                                           |
-| `@scottlepper/mcp-toolkit/tool`          | Consolidated-tool dispatcher (`dispatch`, `buildInputSchema`). Includes the `full: true` escape hatch (skip trim, return raw response) on read-shaped actions. `ToolError` alias of `DispatchError`.                                                         |
-| `@scottlepper/mcp-toolkit/config`        | `parseToolFilterEnv` (`enabled_categories` + `disabled_actions` from env), `parseToolMode`. Server-specific env var names stay in the server; the SDK provides the parsing logic.                                                                            |
+| `ultra-mcp-toolkit/manifest`      | Central operation manifest type (`Operation`, `ParamSpec`) + dispatcher (`invokeOperation`, `invokeOperationRaw`). Generic over a `Client` adapter with an `ExecuteFn` hook for multi-API routing.                                                           |
+| `ultra-mcp-toolkit/sandbox`       | Content-addressed disk cache (SHA256 hash → JSON file). Stores full responses out of model context; returns summary + ref. Session-isolated, TTL cleanup.                                                                                                    |
+| `ultra-mcp-toolkit/page-cache`    | Versioned-id disk cache (kind + id + version → JSON file). For known-key resources where the version invalidates the cache (PR diffs by head SHA, Confluence pages by version). Atomic writes via tmpfile+rename.                                            |
+| `ultra-mcp-toolkit/trim`          | Helpers for response shaping: `pick`, `paginatedListSummary`, `bareListSummary`, `extractNextCursor`, `safeHref`.                                                                                                                                            |
+| `ultra-mcp-toolkit/trim-registry` | Type-safe string-keyed registry of trim projection functions (`createTrimRegistry`).                                                                                                                                                                         |
+| `ultra-mcp-toolkit/bridge`        | IPC socket bridge for the code-api pattern. `startBridge` (server), `callBridge` (client). Unix domain socket on POSIX, loopback TCP on Windows.                                                                                                             |
+| `ultra-mcp-toolkit/code-api`      | `bootCodeApi` (server startup glue) + `createCodeApiTool` (the single MCP tool exposed in code-api mode).                                                                                                                                                    |
+| `ultra-mcp-toolkit/cli`           | CLI scaffolding (`createCli`): argv parser, help renderer, install-skill subcommand, bridge dispatch, direct-mode hook.                                                                                                                                      |
+| `ultra-mcp-toolkit/client`        | Generic `Client` interface (get/post/put/delete). Servers provide their own concrete implementations.                                                                                                                                                        |
+| `ultra-mcp-toolkit/http-client`   | `createHttpClient` — opinionated `Client` over `undici.request`. Handles redirects, basic/bearer/custom auth, 204 → `{}`. Opt-in `retry` switches to the pooled transport.                                                                                   |
+| `ultra-mcp-toolkit/transport`     | Pooled retry-aware HTTP transport. `httpRequest`, `RetryOptions`, `DEFAULT_RETRY`, `computeBackoffMs`, `closeHttpPool`, `__setTransportForTests`. Module-level `undici.Agent` singleton (8 connections, keep-alive). 429-aware retry honoring `Retry-After`. |
+| `ultra-mcp-toolkit/streaming`     | `downloadToFile` (atomic stream-to-disk with sha256), `sanitizeFilename` (path-traversal safe), `guardSingleConsumption` (one-shot body wrapper).                                                                                                            |
+| `ultra-mcp-toolkit/lru`           | `TtlLruCache<K, V>` — in-memory TTL + LRU cache for short-lived metadata (field defs, status enums).                                                                                                                                                         |
+| `ultra-mcp-toolkit/disk-cache`    | Generic `readDiskCache` / `writeDiskCache` keyed under `<rootDir>/<scope>/<sha256(key)>.json`. Corrupt files return `undefined` rather than throw.                                                                                                           |
+| `ultra-mcp-toolkit/tool`          | Consolidated-tool dispatcher (`dispatch`, `buildInputSchema`). Includes the `full: true` escape hatch (skip trim, return raw response) on read-shaped actions. `ToolError` alias of `DispatchError`.                                                         |
+| `ultra-mcp-toolkit/config`        | `parseToolFilterEnv` (`enabled_categories` + `disabled_actions` from env), `parseToolMode`. Server-specific env var names stay in the server; the SDK provides the parsing logic.                                                                            |
 
 ## Design principles
 
@@ -34,18 +34,18 @@ Shared toolkit for building token-efficient [Model Context Protocol](https://mod
 ## Minimum viable consumer
 
 ```ts
-import { createSandbox } from "@scottlepper/mcp-toolkit/sandbox";
-import { createTrimRegistry } from "@scottlepper/mcp-toolkit/trim-registry";
+import { createSandbox } from "ultra-mcp-toolkit/sandbox";
+import { createTrimRegistry } from "ultra-mcp-toolkit/trim-registry";
 import {
   invokeOperation,
   type Manifest,
-} from "@scottlepper/mcp-toolkit/manifest";
-import { startBridge } from "@scottlepper/mcp-toolkit/bridge";
-import { createCli } from "@scottlepper/mcp-toolkit/cli";
+} from "ultra-mcp-toolkit/manifest";
+import { startBridge } from "ultra-mcp-toolkit/bridge";
+import { createCli } from "ultra-mcp-toolkit/cli";
 import {
   bootCodeApi,
   createCodeApiTool,
-} from "@scottlepper/mcp-toolkit/code-api";
+} from "ultra-mcp-toolkit/code-api";
 
 const sandbox = createSandbox({ rootName: "my-server-mcp" });
 const trimRegistry = createTrimRegistry({
@@ -99,7 +99,7 @@ process.exit(await cli.run(process.argv.slice(2)));
 ### `lru` — TTL + LRU in-memory cache
 
 ```ts
-import { TtlLruCache } from "@scottlepper/mcp-toolkit/lru";
+import { TtlLruCache } from "ultra-mcp-toolkit/lru";
 
 const fieldDefs = new TtlLruCache<string, FieldDef>({
   maxSize: 500,
@@ -116,7 +116,7 @@ import {
   httpRequest,
   DEFAULT_RETRY,
   closeHttpPool,
-} from "@scottlepper/mcp-toolkit/transport";
+} from "ultra-mcp-toolkit/transport";
 
 const res = await httpRequest(
   "https://api.example.com/v1/things",
@@ -132,8 +132,8 @@ await closeHttpPool();
 Or wire it into the high-level `Client` via the opt-in `retry` option:
 
 ```ts
-import { createHttpClient } from "@scottlepper/mcp-toolkit/http-client";
-import { DEFAULT_RETRY } from "@scottlepper/mcp-toolkit/transport";
+import { createHttpClient } from "ultra-mcp-toolkit/http-client";
+import { DEFAULT_RETRY } from "ultra-mcp-toolkit/transport";
 
 const client = createHttpClient({
   baseUrl: "https://api.example.com",
@@ -146,7 +146,7 @@ const client = createHttpClient({
 ### `streaming` — stream binary downloads to disk
 
 ```ts
-import { downloadToFile } from "@scottlepper/mcp-toolkit/streaming";
+import { downloadToFile } from "ultra-mcp-toolkit/streaming";
 
 const ref = await downloadToFile({
   url: attachment.contentUrl,
@@ -163,7 +163,7 @@ const ref = await downloadToFile({
 import {
   readDiskCache,
   writeDiskCache,
-} from "@scottlepper/mcp-toolkit/disk-cache";
+} from "ultra-mcp-toolkit/disk-cache";
 
 const opts = {
   rootDir: sandbox.rootCacheDir(),
@@ -186,7 +186,7 @@ import {
   dispatch,
   FULL_META_KEY,
   ToolError,
-} from "@scottlepper/mcp-toolkit/tool";
+} from "ultra-mcp-toolkit/tool";
 
 await dispatch(
   myTool,
@@ -197,11 +197,11 @@ await dispatch(
 
 ## Bundled Claude Code skill
 
-The package ships a Claude Code skill at `.claude/skills/mcp-toolkit/` — hub `SKILL.md` plus topic references covering manifest, trim, dispatcher, and server boot. Install with:
+The package ships a Claude Code skill at `.claude/skills/ultra-mcp-toolkit/` — hub `SKILL.md` plus topic references covering manifest, trim, dispatcher, and server boot. Install with:
 
 ```bash
-npm run install-skill                  # → ~/.claude/skills/mcp-toolkit/  (user-global)
-npm run install-skill -- --project     # → ./.claude/skills/mcp-toolkit/  (cwd)
+npm run install-skill                  # → ~/.claude/skills/ultra-mcp-toolkit/  (user-global)
+npm run install-skill -- --project     # → ./.claude/skills/ultra-mcp-toolkit/  (cwd)
 npm run install-skill -- --help        # flags: --force, --dry-run, --print
 ```
 
@@ -209,7 +209,7 @@ Non-Claude agents (Codex CLI, Cursor, Aider, etc.) can read the skill files dire
 
 ## Status
 
-`v0.5` — Bundles the toolkit's own Claude Code skill (`.claude/skills/mcp-toolkit/`) plus a `npm run install-skill` script. Pure addition: skill is opt-in, no API changes.
+`v0.5` — Bundles the toolkit's own Claude Code skill (`.claude/skills/ultra-mcp-toolkit/`) plus a `npm run install-skill` script. Pure addition: skill is opt-in, no API changes.
 
 `v0.4` — Adds the optional `tool?: string` field to `DispatchError` / `ToolError` so catch sites can recover the consolidated tool name. Constructor arg is optional → v0.3 callers compile unchanged. Populated automatically by `dispatch()` for every internal throw.
 

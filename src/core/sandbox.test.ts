@@ -9,7 +9,7 @@ describe("createSandbox", () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "mcp-toolkit-sandbox-"));
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "ultra-mcp-toolkit-sandbox-"));
   });
 
   afterEach(async () => {

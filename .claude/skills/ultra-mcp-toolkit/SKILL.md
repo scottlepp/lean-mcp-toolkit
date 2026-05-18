@@ -1,11 +1,11 @@
 ---
-name: mcp-toolkit
-description: Use when building, extending, or debugging an MCP (Model Context Protocol) server with @scottlepper/mcp-toolkit. Triggers include adding a new operation, writing a trim function, wiring a consolidated tool, booting stdio or code-api mode, or asking how the toolkit's manifest / trim / dispatcher patterns work. Skip for generic MCP questions unrelated to this toolkit.
+name: ultra-mcp-toolkit
+description: Use when building, extending, or debugging an MCP (Model Context Protocol) server with ultra-mcp-toolkit. Triggers include adding a new operation, writing a trim function, wiring a consolidated tool, booting stdio or code-api mode, or asking how the toolkit's manifest / trim / dispatcher patterns work. Skip for generic MCP questions unrelated to this toolkit.
 ---
 
-# Building MCP servers with `@scottlepper/mcp-toolkit`
+# Building MCP servers with `ultra-mcp-toolkit`
 
-This skill is the entry point for working with `@scottlepper/mcp-toolkit` — the shared infrastructure that powers `jira-mcp`, `confluence-mcp`, and `bitbucket-mcp`. It optimizes for **token efficiency**: the server does deterministic filtering/chunking; the model never receives raw API blobs.
+This skill is the entry point for working with `ultra-mcp-toolkit` — the shared infrastructure that powers `jira-mcp`, `confluence-mcp`, and `bitbucket-mcp`. It optimizes for **token efficiency**: the server does deterministic filtering/chunking; the model never receives raw API blobs.
 
 Load a topic reference (below) before writing code in that area — each one has the exact shapes, gotchas, and patterns the toolkit expects.
 
@@ -32,7 +32,7 @@ Load a topic reference (below) before writing code in that area — each one has
 - **"Add a new consolidated tool"** — load `dispatcher.md`. Define `ConsolidatedToolDef`, per-action Zod schemas, register in the server's tool list.
 - **"Start a new server from scratch"** — load `server-boot.md` first, then `manifest.md`. Boot pattern, Client impl, two runtime modes.
 - **"My trimmed response drops a field the model needs"** — `trim.md` (extend the projection) or `dispatcher.md` (use `full: true` for raw response on a per-call basis).
-- **"Bump the toolkit version in my server"** — check `npm view @scottlepper/mcp-toolkit version`; consult release notes for breaking changes in `DispatchError`/manifest shape.
+- **"Bump the toolkit version in my server"** — check `npm view ultra-mcp-toolkit version`; consult release notes for breaking changes in `DispatchError`/manifest shape.
 
 ## Design principles (do not violate)
 
@@ -45,19 +45,19 @@ Load a topic reference (below) before writing code in that area — each one has
 ## Quick package-export map
 
 ```
-@scottlepper/mcp-toolkit/manifest   — Operation, ParamSpec, invokeOperation
-@scottlepper/mcp-toolkit/trim       — pick, paginatedListSummary, helpers
-@scottlepper/mcp-toolkit/trim-registry — createTrimRegistry
-@scottlepper/mcp-toolkit/sandbox    — createSandbox (content-addressed)
-@scottlepper/mcp-toolkit/page-cache — versioned-id disk cache
-@scottlepper/mcp-toolkit/tool       — dispatch, buildInputSchema, DispatchError
-@scottlepper/mcp-toolkit/stdio      — startStdioServer
-@scottlepper/mcp-toolkit/code-api   — bootCodeApi, createCodeApiTool
-@scottlepper/mcp-toolkit/bridge     — startBridge, callBridge
-@scottlepper/mcp-toolkit/cli        — createCli (CLI scaffolding)
-@scottlepper/mcp-toolkit/client     — Client interface
-@scottlepper/mcp-toolkit/http-client — createHttpClient
-@scottlepper/mcp-toolkit/schemas    — shared Zod helpers (positiveInt, etc.)
+ultra-mcp-toolkit/manifest   — Operation, ParamSpec, invokeOperation
+ultra-mcp-toolkit/trim       — pick, paginatedListSummary, helpers
+ultra-mcp-toolkit/trim-registry — createTrimRegistry
+ultra-mcp-toolkit/sandbox    — createSandbox (content-addressed)
+ultra-mcp-toolkit/page-cache — versioned-id disk cache
+ultra-mcp-toolkit/tool       — dispatch, buildInputSchema, DispatchError
+ultra-mcp-toolkit/stdio      — startStdioServer
+ultra-mcp-toolkit/code-api   — bootCodeApi, createCodeApiTool
+ultra-mcp-toolkit/bridge     — startBridge, callBridge
+ultra-mcp-toolkit/cli        — createCli (CLI scaffolding)
+ultra-mcp-toolkit/client     — Client interface
+ultra-mcp-toolkit/http-client — createHttpClient
+ultra-mcp-toolkit/schemas    — shared Zod helpers (positiveInt, etc.)
 ```
 
-Prefer the subpath imports over the umbrella `@scottlepper/mcp-toolkit` import — better tree-shaking and clearer dependency intent.
+Prefer the subpath imports over the umbrella `ultra-mcp-toolkit` import — better tree-shaking and clearer dependency intent.

@@ -68,7 +68,7 @@ describe("code-api integration", () => {
   let bridge: BridgeServer;
 
   beforeEach(async () => {
-    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "mcp-toolkit-int-"));
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "ultra-mcp-toolkit-int-"));
   });
 
   afterEach(async () => {

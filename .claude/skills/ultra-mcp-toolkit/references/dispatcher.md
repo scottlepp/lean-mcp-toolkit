@@ -8,7 +8,7 @@ Example: instead of `issue_get`, `issue_list`, `issue_create`, `issue_comment` (
 
 ```ts
 import { z } from "zod";
-import type { ConsolidatedToolDef } from "@scottlepper/mcp-toolkit/tool";
+import type { ConsolidatedToolDef } from "ultra-mcp-toolkit/tool";
 
 export const jiraIssueTool: ConsolidatedToolDef = {
   name: "jira_issue",
@@ -47,7 +47,7 @@ export const jiraIssueTool: ConsolidatedToolDef = {
 ## Wiring into an MCP server
 
 ```ts
-import { buildInputSchema, dispatch } from "@scottlepper/mcp-toolkit/tool";
+import { buildInputSchema, dispatch } from "ultra-mcp-toolkit/tool";
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [{
@@ -94,7 +94,7 @@ Use it as an escape hatch when a trim drops a field a one-off agent task needs.
 ## Errors — `DispatchError` and `ToolError`
 
 ```ts
-import { DispatchError, ToolError } from "@scottlepper/mcp-toolkit/tool";
+import { DispatchError, ToolError } from "ultra-mcp-toolkit/tool";
 ```
 
 - `DispatchError(message, action, tool?)` — thrown for missing/invalid action, Zod failures, type errors on `full`, missing operation+handler, etc.
