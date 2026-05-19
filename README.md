@@ -139,6 +139,8 @@ Import what you need; prefer subpaths over the umbrella `ultra-mcp-toolkit` impo
 | `ultra-mcp-toolkit/mutation-ack`   | `createMutationAck` — minimal mutation acknowledgement envelope (`{ ok, kind, id, url }`).                                                                                                             |
 | `ultra-mcp-toolkit/stdio`          | `startStdioServer` — MCP stdio boot helper. Hides the "don't `process.exit` after connect" + SIGINT/SIGTERM footguns.                                                                                  |
 | `ultra-mcp-toolkit/schemas`        | Shared Zod schemas (`positiveInt`, etc.).                                                                                                                                                              |
+| `ultra-mcp-toolkit/agent-safety`   | Defense-in-depth validators for autonomous-agent harnesses: `resolveSafePath`, `verifyResolvedRealpath`, `isProtectedPath`, `SafetyChecker`. Caller-extensible denylist + harmful/secret/shell scans.   |
+| `ultra-mcp-toolkit/agent-tools`    | Pre-built Vercel-AI `tool({...})` factories wired through `agent-safety`: `createFileTools`, `createGitTools`, `createGitHubTools`, `createTestTools`. Optional peers: `ai`, `@octokit/rest`, `zod`.    |
 
 <details>
 <summary><strong>Module deep-dives (v0.3+)</strong></summary>
