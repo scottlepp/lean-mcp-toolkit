@@ -1,6 +1,6 @@
 {
   "name": "ultra-mcp-toolkit",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Shared toolkit for building token-efficient Model Context Protocol (MCP) servers — operation manifest, response trimming, disk sandbox, code-api/CLI bridge, SKILL.md installer.",
   "type": "module",
   "publishConfig": {
@@ -90,6 +90,14 @@
     "./stdio": {
       "types": "./build/boot/stdio.d.ts",
       "import": "./build/boot/stdio.js"
+    },
+    "./agent-safety": {
+      "types": "./build/agent-safety/index.d.ts",
+      "import": "./build/agent-safety/index.js"
+    },
+    "./agent-tools": {
+      "types": "./build/agent-tools/index.d.ts",
+      "import": "./build/agent-tools/index.js"
     }
   },
   "main": "./build/index.js",
@@ -128,15 +136,25 @@
     "undici": "^6.25.0"
   },
   "peerDependencies": {
+    "@octokit/rest": "^22.0.0",
+    "ai": "^6.0.0",
     "zod": "^4.0.0"
   },
   "peerDependenciesMeta": {
+    "@octokit/rest": {
+      "optional": true
+    },
+    "ai": {
+      "optional": true
+    },
     "zod": {
       "optional": true
     }
   },
   "devDependencies": {
+    "@octokit/rest": "^22.0.1",
     "@types/node": "^25.6.0",
+    "ai": "^6.0.182",
     "typescript": "^6.0.3",
     "vitest": "^4.1.5",
     "zod": "^4.4.3"

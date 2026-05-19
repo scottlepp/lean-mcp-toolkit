@@ -16,6 +16,12 @@
 //   import { createHttpClient } from "ultra-mcp-toolkit/http-client";
 //   import { createMutationAck } from "ultra-mcp-toolkit/mutation-ack";
 //   import { startStdioServer } from "ultra-mcp-toolkit/stdio";
+//   import { SafetyChecker, resolveSafePath } from "ultra-mcp-toolkit/agent-safety";
+//   import { createFileTools, createGitTools } from "ultra-mcp-toolkit/agent-tools";
+//
+// agent-tools is intentionally NOT re-exported from the umbrella below —
+// it pulls in `ai` and `@octokit/rest` (optional peers). Only consumers that
+// explicitly import the subpath pay that dependency cost.
 
 export * from "./core/sandbox.js";
 export * from "./core/page-cache.js";
@@ -36,4 +42,5 @@ export * from "./tool/dispatcher.js";
 export * from "./schemas/index.js";
 export * from "./trim/mutation-ack.js";
 export * from "./boot/stdio.js";
+export * from "./agent-safety/index.js";
 export type * from "./types/refs.js";
